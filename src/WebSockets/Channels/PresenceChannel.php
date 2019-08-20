@@ -2,6 +2,8 @@
 
 namespace BeyondCode\LaravelWebSockets\WebSockets\Channels;
 
+use BeyondCode\LaravelWebSockets\Events\PresenceChannelSubscribedEvent;
+use BeyondCode\LaravelWebSockets\Events\PresenceChannelUnsubscribedEvent;
 use stdClass;
 use Ratchet\ConnectionInterface;
 
@@ -25,7 +27,7 @@ class PresenceChannel extends Channel
 
         $channelData = json_decode($payload->channel_data);
         $this->users[$connection->socketId] = $channelData;
-
+        \Event::fire(new PresenceChannelSubscribedEvent($connection->socketId, $channelData->user_id, $this->channelName, $this->getChannelData()));
         // Send the success event
         $connection->send(json_encode([
             'event' => 'pusher_internal:subscription_succeeded',
@@ -44,9 +46,10 @@ class PresenceChannel extends Channel
     {
         parent::unsubscribe($connection);
 
-        if (! isset($this->users[$connection->socketId])) {
+        if (!isset($this->users[$connection->socketId])) {
             return;
         }
+        \Event::fire(new PresenceChannelUnsubscribedEvent($connection->socketId, $this->users[$connection->socketId]->user_id, $this->channelName));
 
         $this->broadcastToOthers($connection, [
             'event' => 'pusher_internal:member_removed',
@@ -80,7 +83,7 @@ class PresenceChannel extends Channel
     protected function getUserIds(): array
     {
         $userIds = array_map(function ($channelData) {
-            return (string) $channelData->user_id;
+            return (string)$channelData->user_id;
         }, $this->users);
 
         return array_values($userIds);

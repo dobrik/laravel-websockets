@@ -2,6 +2,7 @@
 
 namespace BeyondCode\LaravelWebSockets\WebSockets\Messages;
 
+use BeyondCode\LaravelWebSockets\Events\PusherClientMessageEvent;
 use stdClass;
 use Illuminate\Support\Str;
 use Ratchet\ConnectionInterface;
@@ -39,7 +40,8 @@ class PusherClientMessage implements PusherMessage
         }
 
         DashboardLogger::clientMessage($this->connection, $this->payload);
-
+        \Event::fire(new PusherClientMessageEvent($this->connection->socketId, $this->payload->channel, $this->payload->data));
+        //TODO: write event client message received
         $channel = $this->channelManager->find($this->connection->app->id, $this->payload->channel);
 
         optional($channel)->broadcastToOthers($this->connection, $this->payload);
