@@ -40,8 +40,7 @@ class PusherClientMessage implements PusherMessage
         }
 
         DashboardLogger::clientMessage($this->connection, $this->payload);
-        \Event::fire(new PusherClientMessageEvent($this->connection->socketId, $this->payload->channel, $this->payload->data));
-        //TODO: write event client message received
+        event(new PusherClientMessageEvent($this->connection->socketId, $this->payload->channel, $this->payload->data));
         $channel = $this->channelManager->find($this->connection->app->id, $this->payload->channel);
 
         optional($channel)->broadcastToOthers($this->connection, $this->payload);

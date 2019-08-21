@@ -27,7 +27,7 @@ class PresenceChannel extends Channel
 
         $channelData = json_decode($payload->channel_data);
         $this->users[$connection->socketId] = $channelData;
-        \Event::fire(new PresenceChannelSubscribedEvent($connection->socketId, $channelData->user_id, $this->channelName, $this->getChannelData()));
+        event(new PresenceChannelSubscribedEvent($connection->socketId, $channelData->user_id, $this->channelName, $this->getChannelData()));
         // Send the success event
         $connection->send(json_encode([
             'event' => 'pusher_internal:subscription_succeeded',
@@ -49,7 +49,7 @@ class PresenceChannel extends Channel
         if (!isset($this->users[$connection->socketId])) {
             return;
         }
-        \Event::fire(new PresenceChannelUnsubscribedEvent($connection->socketId, $this->users[$connection->socketId]->user_id, $this->channelName));
+        event(new PresenceChannelUnsubscribedEvent($connection->socketId, $this->users[$connection->socketId]->user_id, $this->channelName));
 
         $this->broadcastToOthers($connection, [
             'event' => 'pusher_internal:member_removed',
