@@ -4,12 +4,12 @@ namespace BeyondCode\LaravelWebSockets\Events;
 
 class PresenceChannelUnsubscribedEvent
 {
-    public $socketId, $userId, $channelName;
+    public $socketId, $userData, $channelName;
 
-    public function __construct(string $socketId, int $userId, string $channelName)
+    public function __construct(string $socketId, \stdClass $userData, string $channelName)
     {
         $this->socketId = $socketId;
-        $this->userId = $userId;
+        $this->userData = $userData;
         $this->channelName = $channelName;
     }
 }
