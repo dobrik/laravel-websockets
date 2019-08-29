@@ -4,16 +4,17 @@ namespace BeyondCode\LaravelWebSockets\Events;
 
 class PusherClientMessageEvent implements SingleToneEventInterface
 {
-    public $socketId, $channelName, $data;
+    public $socketId, $userData, $channelName, $messageData;
 
     /** @var PusherClientMessageEvent */
     public static $eventInstance;
 
-    public function __construct(string $socketId, string $channelName, $data)
+    public function __construct(string $socketId, \stdClass $userData, string $channelName, $messageData)
     {
         $this->socketId = $socketId;
+        $this->userData = $userData;
         $this->channelName = $channelName;
-        $this->data = $data;
+        $this->messageData = $messageData;
     }
 
     public static function create(...$args): SingleToneEventInterface

@@ -9,7 +9,7 @@ class PresenceChannelUnsubscribedEvent implements SingleToneEventInterface
     /** @var PusherClientMessageEvent */
     public static $eventInstance;
 
-    public function __construct(string $socketId, stdClass $userData, string $channelName)
+    public function __construct(string $socketId, \stdClass $userData, string $channelName)
     {
         $this->socketId = $socketId;
         $this->userData = $userData;

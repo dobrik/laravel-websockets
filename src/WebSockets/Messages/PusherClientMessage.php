@@ -31,17 +31,18 @@ class PusherClientMessage implements PusherMessage
 
     public function respond()
     {
-        if (! Str::startsWith($this->payload->event, 'client-')) {
+        if (!Str::startsWith($this->payload->event, 'client-')) {
             return;
         }
 
-        if (! $this->connection->app->clientMessagesEnabled) {
+        if (!$this->connection->app->clientMessagesEnabled) {
             return;
         }
 
         DashboardLogger::clientMessage($this->connection, $this->payload);
-        event(PusherClientMessageEvent::create($this->connection->socketId, $this->payload->channel, $this->payload->data));
         $channel = $this->channelManager->find($this->connection->app->id, $this->payload->channel);
+        $userData = $channel->getUsers()[$this->connection->socketId];
+        event(PusherClientMessageEvent::create($this->connection->socketId, $userData, $this->payload->channel, $this->payload->data));
 
         optional($channel)->broadcastToOthers($this->connection, $this->payload);
     }
