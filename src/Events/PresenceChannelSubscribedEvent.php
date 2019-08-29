@@ -4,15 +4,15 @@ namespace BeyondCode\LaravelWebSockets\Events;
 
 class PresenceChannelSubscribedEvent implements SingleToneEventInterface
 {
-    public $socketId, $userId, $channelName, $channelData;
+    public $socketId, $userData, $channelName, $channelData;
 
     /** @var PusherClientMessageEvent */
     public static $eventInstance;
 
-    public function __construct(string $socketId, int $userId, string $channelName, array $channelData)
+    public function __construct(string $socketId, \stdClass $userData, string $channelName, array $channelData)
     {
         $this->socketId = $socketId;
-        $this->userId = $userId;
+        $this->userData = $userData;
         $this->channelName = $channelName;
         $this->channelData = $channelData;
     }
